@@ -13,8 +13,17 @@ data = json.loads(response.text)
 peliculas = []
 
 
-for i in range(5):
-	peliculas.append(data["items"][i]["title"])
+f = open("data.json", "r")
+content = f.read()
+jsondecoded = json.loads(content)
+
+for entity in jsondecoded["items"]:
+    peliculas.append(entity["title"])
+
+    #if entity["year"] == '2020':
+        #result.append(entity["title"]+" "+entity["year"])
+        #print(entity["title"]+" "+entity["year"])
+        #print(entity["title"])
 	
 
 auth = OAuthHandler(consumer_key, consumer_secret)
@@ -32,4 +41,3 @@ except:
 for i in (peliculas):
 	for tweet in tweepy.Cursor(api.search,q=i,count=100, lang="en", since="2017-04-03").items():
 		print (tweet.created_at, tweet.text)
-
