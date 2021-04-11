@@ -34,7 +34,6 @@ def main():
 
     lista_peliculas = obtenerListaPeliculas()
 
-
     auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
  
@@ -50,9 +49,32 @@ def main():
 
     for i in (lista_peliculas):
 	    for tweet in tweepy.Cursor(api.search,q=i,count=100, lang="en", since="2017-04-03").items(20):
-		    print (tweet.created_at, tweet.text)
-           
-            
+		    list_tweets.append(tweet.text)
+
+
+    # texto = "".join(list_tweets)
+
+    # for i in range(len(list_tweets)):
+    #     new_list.append(texto.split("\n")[i])
+    #     print(i)
+    
+
+
+
+
+    new_list = []
+    for i in range(len(list_tweets)):
+        new_list.append(list_tweets[i].split("\n")[0])
+        #print("Tweet",i, ":\n", list_tweets[i].split("\n")[0])
+
+    j=0
+    for i in new_list:
+        print("Tweet " , j ,":\n", i)
+        j=j+1
+
+    #print("Tercer tweet", (list_tweets[3]))
+
+
 
 try:
     main()
