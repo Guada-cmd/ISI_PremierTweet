@@ -66,14 +66,12 @@ def main():
 
     j=0
     for i in new_list:
-        print("Tweet " , j ,":\n", i)
+        print("\nTweet " , j ,":\n", i, "\n")
         j=j+1
 
     #print("Tercer tweet", (list_tweets[3]))
 
 
 
-try:
-    main()
-except KeyboardInterrupt:
-    pass    
+main()
+   
