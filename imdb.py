@@ -57,9 +57,6 @@ def main():
     # for i in range(len(list_tweets)):
     #     new_list.append(texto.split("\n")[i])
     #     print(i)
-    
-
-
 
 
     new_list = []
