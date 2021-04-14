@@ -1,6 +1,7 @@
 import json, requests
 import re
 import tweepy
+import csv
 from tweepy import OAuthHandler
 from textblob import TextBlob
 
@@ -116,7 +117,8 @@ def showMainOptions():
 2.- Sentiment analysis successful movies all the time.
 3.- Sentiment analysis top movies.
 4.- Sentiment analysis coming soon movies.
-5.- Exit.''')
+5.- .csv format.
+6.- Exit.''')
 
 def printSentimentAnalysis(api, lista_peliculas) -> None:
 
@@ -177,6 +179,10 @@ def main():
     lista_peliculas_top = []
     lista_peliculas_proximas = []
 
+    lista_ejemplo = []
+    lista_ejemplo.append("Ejemplo peli 2")
+    lista_ejemplo.append("Ejemplo peli 1")
+
     exit_sub_menu = False
 
     # URL
@@ -198,7 +204,7 @@ def main():
     while not exit_sub_menu:
 
         showMainOptions()
-        choice = establishmentOfRange(1, 5)
+        choice = establishmentOfRange(1, 6)
         menuChoice = int(choice)
 
         if menuChoice == 1:
@@ -216,8 +222,18 @@ def main():
         elif menuChoice == 4:
 
             printSentimentAnalysis(api, lista_peliculas_proximas)
-
+               
         elif menuChoice == 5:
+
+            fieldnames = []
+            with open('movies.csv', 'w', newline='') as csvfile:
+                fieldnames = ['category', 'movie_title', 'positive', 'neutral', 'negative']
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+                writer.writeheader()
+                writer.writerow({'category': lista_ejemplo[0], 'movie_title': 'nada', 'positive': 'nada', 'neutral': 'nada', 'negative': 'nada'})
+
+        elif menuChoice == 6:
             exit_sub_menu = True
     
     
