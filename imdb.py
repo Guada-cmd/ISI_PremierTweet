@@ -22,7 +22,7 @@ def obtenerListaPeliculas():
     content = file.read()
     json_decoded = json.loads(content)
 
-    for entity in json_decoded["items"]:
+    for entity in data["items"]:
         lista_peliculas.append(entity["title"])
 
     return lista_peliculas

@@ -96,12 +96,11 @@ def obtenerListaPeliculas(url: str) -> list:
  
     response = requests.get(url)   
     data = json.loads(response.text) 
-    
+
     #file = open("data.json", "r")
     #content = file.read()
     #json_decoded = json.loads(content)
 
- 
     for entity in data["items"]:
         lista_peliculas.append(entity["title"])
     
@@ -117,27 +116,41 @@ def showMainOptions():
 2.- Sentiment analysis successful movies all the time.
 3.- Sentiment analysis top movies.
 4.- Sentiment analysis coming soon movies.
-5.- .csv format.
-6.- Exit.''')
+5.- Exit.''')
 
-def printSentimentAnalysis(api, lista_peliculas) -> None:
+def printSentimentAnalysis(api, lista_peliculas) -> list:
+
+    positivo = ""
+    negativo = ""
+    neutral = ""
+    resumen_analisis_sentimientos = []
 
     for i in range(len(lista_peliculas)):
-       
+
         print(str(i+1)+" Movie Title ---- "+lista_peliculas[i]+"\n")
         tweets = api.get_tweets(query = lista_peliculas[i], count = 200)
     
         # picking positive tweets from tweets
         ptweets = [tweet for tweet in tweets if tweet['sentiment'] == 'positive']
+
         # percentage of positive tweets
         print("Positive tweets percentage: {} %".format(100*len(ptweets)/len(tweets)))
+        positivo = str((100*len(ptweets)/len(tweets)))
+
         # picking negative tweets from tweets
         ntweets = [tweet for tweet in tweets if tweet['sentiment'] == 'negative']
+
         # percentage of negative tweets
         print("Negative tweets percentage: {} %".format(100*len(ntweets)/len(tweets)))
+        negativo = str((100*len(ntweets)/len(tweets)))
+
         # percentage of neutral tweets
         print("Neutral tweets percentage: {} % \
             ".format(100*(len(tweets) -(len( ntweets )+len( ptweets)))/len(tweets))+"\n")
+
+        neutral = str(100*(len(tweets) -(len( ntweets )+len( ptweets)))/len(tweets))
+
+        resumen_analisis_sentimientos.append(lista_peliculas[i]+"\n"+str(positivo)+"\n"+str(neutral)+"\n"+str(negativo))
 
         print("-------")
 
@@ -152,7 +165,8 @@ def printSentimentAnalysis(api, lista_peliculas) -> None:
         #print("\n\nNegative tweets:")
         #for tweet in ntweets[:10]:
         #    print(tweet['text'])
-            
+    
+    return resumen_analisis_sentimientos
 
 def establishmentOfRange(min_range: int, max_range: int) -> int:
 
@@ -169,6 +183,28 @@ def establishmentOfRange(min_range: int, max_range: int) -> int:
 
     return option_choice
 
+
+def  printCSV(name, resumen_peliculas):
+
+    fieldnames = ['category', 'movie_title', 'positive', 'neutral', 'negative']
+
+    lista_pelicula_individual = []
+    cadena_pelicula = ""
+
+    with open(name, 'w', newline='') as csvfile:
+        
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for i in range(len(resumen_peliculas)):
+
+            cadena_pelicula = resumen_peliculas[i]
+            lista_pelicula_individual = cadena_pelicula.split('\n')
+
+            writer.writerow({'category': 'movies_theaters', 'movie_title': lista_pelicula_individual[0], 
+            'positive': lista_pelicula_individual[1], 'neutral': lista_pelicula_individual[2], 'negative': lista_pelicula_individual[3]})
+
+
   
 def main():
 
@@ -179,18 +215,22 @@ def main():
     lista_peliculas_top = []
     lista_peliculas_proximas = []
 
-    lista_ejemplo = []
-    lista_ejemplo.append("Ejemplo peli 2")
-    lista_ejemplo.append("Ejemplo peli 1")
+    # Lista con los datos que tendran los datos del analisis de sentimientos
+
+    resumen_peliculas_cines = []
+    resumen_peliculas_exitosas = []
+    resumen_peliculas_top = []
+    resumen_peliculas_proximas = []
+
 
     exit_sub_menu = False
 
     # URL
 
-    URL_MOVIES_THEATERS = "https://imdb-api.com/en/API/InTheaters/k_j8vk26rm"
-    URL_SUCCESS_MOVIES_ALL_TIME = "https://imdb-api.com/en/API/BoxOfficeAllTime/k_j8vk26rm"
-    URL_TOP_MOVIES = "https://imdb-api.com/en/API/Top250Movies/k_j8vk26rm"
-    URL_COMING_SOON_MOVIES = "https://imdb-api.com/en/API/ComingSoon/k_j8vk26rm"
+    URL_MOVIES_THEATERS = "https://imdb-api.com/en/API/InTheaters/k_57tfjuqc"
+    URL_SUCCESS_MOVIES_ALL_TIME = "https://imdb-api.com/en/API/BoxOfficeAllTime/k_57tfjuqc"
+    URL_TOP_MOVIES = "https://imdb-api.com/en/API/Top250Movies/k_57tfjuqc"
+    URL_COMING_SOON_MOVIES = "https://imdb-api.com/en/API/ComingSoon/k_57tfjuqc"
 
     # creating object of TwitterClient Class
     api = TwitterClient()
@@ -204,36 +244,30 @@ def main():
     while not exit_sub_menu:
 
         showMainOptions()
-        choice = establishmentOfRange(1, 6)
+        choice = establishmentOfRange(1, 5)
         menuChoice = int(choice)
 
         if menuChoice == 1:
 
-            printSentimentAnalysis(api, lista_peliculas_cines)
+            resumen_peliculas_cines = printSentimentAnalysis(api, lista_peliculas_cines)
+            printCSV('theaters_movies.csv', resumen_peliculas_cines)
 
         elif menuChoice == 2:
 
-            printSentimentAnalysis(api, lista_peliculas_exitosas)
+            resumen_peliculas_exitosas = printSentimentAnalysis(api, lista_peliculas_exitosas)
+            printCSV('success_movies.csv', resumen_peliculas_exitosas)
 
         elif menuChoice == 3:
 
-            printSentimentAnalysis(api, lista_peliculas_top)
+            resumen_peliculas_top = printSentimentAnalysis(api, lista_peliculas_top)
+            printCSV('top_movies.csv', resumen_peliculas_top)
 
         elif menuChoice == 4:
 
-            printSentimentAnalysis(api, lista_peliculas_proximas)
+            resumen_peliculas_proximas = printSentimentAnalysis(api, lista_peliculas_proximas)
+            printCSV('coming_soon_movies.csv', resumen_peliculas_proximas)
                
         elif menuChoice == 5:
-
-            fieldnames = []
-            with open('movies.csv', 'w', newline='') as csvfile:
-                fieldnames = ['category', 'movie_title', 'positive', 'neutral', 'negative']
-                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-                writer.writeheader()
-                writer.writerow({'category': lista_ejemplo[0], 'movie_title': 'nada', 'positive': 'nada', 'neutral': 'nada', 'negative': 'nada'})
-
-        elif menuChoice == 6:
             exit_sub_menu = True
     
     
