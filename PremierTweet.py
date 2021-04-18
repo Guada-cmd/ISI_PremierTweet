@@ -5,7 +5,7 @@ def main():
     while True:
         auth = tweepy.AppAuthHandler("HBE7m9FTfdR7oC5awdcuDTS66","hHDJBblupuLHephjNzxi9CKVwCGHqAAVec8sgsl4zX4BbtV85H")
         api = tweepy.API(auth)
-        url = "https://imdb-api.com/en/API/InTheaters/k_j8vk26rm"
+        url = "https://imdb-api.com/en/API/InTheaters/k_57tfjuqc"
         response = requests.get(url)
         python_dictionary_values = json.loads(response.text)
         estrenos = python_dictionary_values.get('items')
