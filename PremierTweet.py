@@ -89,6 +89,60 @@ class TwitterClient(object):
             # print error (if any)
             print("Error : " + str(e))
 
+def showMainOptions():
+
+    print("-----------------------------------------------------------------------------------------------")
+    print('''\nWlcome to the Premier Tweet aplication!\n
+    1.- See new films.
+    2.- See a list of tweets.
+    3.- Sentiment analysis.
+    4.- Exit.\n''')
+    print("-----------------------------------------------------------------------------------------------")
+
+def showOptionOne():
+
+     print('''\nChoose what to do:
+    1.- Movies in threaters.
+    2.- Successful movies all the time.
+    3.- Top movies.
+    4.- Coming soon movies.
+    5.- Exit.''')
+
+
+def showOptionTwo():
+
+     print('''\nChoose what to do:
+    1.- List of tweets of movies in threaters.
+    2.- List of tweets of successful movies all the time.
+    3.- List of tweets of top movies.
+    4.- List of tweets of coming soon movies.
+    5.- Exit.''')
+
+
+def showOptionThree():
+
+    print('''\nChoose what to do:
+    1.- Sentiment analysis movies in threaters.
+    2.- Sentiment analysis successful movies all the time.
+    3.- Sentiment analysis top movies.
+    4.- Sentiment analysis coming soon movies.
+    5.- Exit.''')
+
+
+def establishmentOfRange(min_range: int, max_range: int) -> int:
+
+    while True:
+
+        option_choice = input()
+
+        if not option_choice.isnumeric() or int(option_choice) < min_range or int(option_choice) > max_range:
+            print('The choice must be a number between ' +
+                  str(min_range)+' and ' + str(max_range))
+            continue
+        else:
+            break
+
+    return option_choice
 
 def obtenerListaPeliculas(url: str) -> list:
 
@@ -96,10 +150,6 @@ def obtenerListaPeliculas(url: str) -> list:
  
     response = requests.get(url)   
     data = json.loads(response.text) 
-
-    #file = open("data.json", "r")
-    #content = file.read()
-    #json_decoded = json.loads(content)
 
     for entity in data["items"]:
         lista_peliculas.append(entity["title"])
@@ -109,14 +159,117 @@ def obtenerListaPeliculas(url: str) -> list:
 
     return lista_peliculas
 
-def showMainOptions():
+def menu_opcion_uno(lista_peliculas_cines, lista_peliculas_exitosas, lista_peliculas_top, lista_peliculas_proximas):
 
-    print('''\nChoose what to do:
-1.- Sentiment analysis movies in threaters.
-2.- Sentiment analysis successful movies all the time.
-3.- Sentiment analysis top movies.
-4.- Sentiment analysis coming soon movies.
-5.- Exit.''')
+    exit_sub_menu = False
+
+    while not exit_sub_menu:
+
+        showOptionOne()
+        choice = establishmentOfRange(1, 5)
+        menuChoice = int(choice)
+
+        if menuChoice == 1:
+
+            for i in range(len(lista_peliculas_cines)):
+                print(str(i+1)+" Movie Title ---- "+lista_peliculas_cines[i]+"\n")
+
+        elif menuChoice == 2:
+
+            for i in range(len(lista_peliculas_exitosas)):
+                print(str(i+1)+" Movie Title ---- "+lista_peliculas_exitosas[i]+"\n")
+            
+
+        elif menuChoice == 3:
+
+            for i in range(len(lista_peliculas_top)):
+                print(str(i+1)+" Movie Title ---- "+lista_peliculas_top[i]+"\n")
+
+        elif menuChoice == 4:
+
+            for i in range(len(lista_peliculas_proximas)):
+                print(str(i+1)+" Movie Title ---- "+lista_peliculas_proximas[i]+"\n")
+               
+        elif menuChoice == 5:
+            exit_sub_menu = True
+
+def menu_opcion_dos(lista_peliculas_cines, lista_peliculas_exitosas, lista_peliculas_top, lista_peliculas_proximas):
+
+    exit_sub_menu = False
+
+    while not exit_sub_menu:
+
+        showOptionTwo()
+        choice = establishmentOfRange(1, 5)
+        menuChoice = int(choice)
+
+        api = TwitterClient()
+
+        if menuChoice == 1:
+            
+            for i in range(len(lista_peliculas_cines)):
+
+                tweets = api.get_tweets(query = lista_peliculas_cines[i], count = 200)
+                print("Teewst "+lista_peliculas_cines[i])
+                
+                for i in tweets[:10]:
+                    print(i['text'])
+
+        elif menuChoice == 2:
+            
+            for i in range(len(lista_peliculas_exitosas)):
+
+                tweets = api.get_tweets(query = lista_peliculas_exitosas[i], count = 200)
+                print("Teewst "+lista_peliculas_exitosas[i])
+                
+                for i in tweets[:10]:
+                    print(i['text'])
+           
+        elif menuChoice == 3:
+
+            for i in range(len(lista_peliculas_top)):
+
+                tweets = api.get_tweets(query = lista_peliculas_top[i], count = 200)
+                print("Teewst "+lista_peliculas_top[i])
+                
+                for i in tweets[:10]:
+                    print(i['text'])
+
+        elif menuChoice == 4:
+
+            for i in range(len(lista_peliculas_proximas)):
+
+                tweets = api.get_tweets(query = lista_peliculas_proximas[i], count = 200)
+                print("Teewst "+lista_peliculas_proximas[i])
+                
+                for i in tweets[:10]:
+                    print(i['text'])
+
+
+        elif menuChoice == 5:
+            exit_sub_menu = True
+
+
+def printCSV(name, resumen_peliculas):
+
+    fieldnames = ['category', 'movie_title', 'positive', 'neutral', 'negative']
+
+    lista_pelicula_individual = []
+    cadena_pelicula = ""
+
+    with open(name, 'w', newline='') as csvfile:
+        
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+
+        for i in range(len(resumen_peliculas)):
+
+            cadena_pelicula = resumen_peliculas[i]
+            lista_pelicula_individual = cadena_pelicula.split('\n')
+
+            writer.writerow({'category': 'movies_theaters', 'movie_title': lista_pelicula_individual[0], 
+            'positive': lista_pelicula_individual[1], 'neutral': lista_pelicula_individual[2], 'negative': lista_pelicula_individual[3]})
+
 
 def printSentimentAnalysis(api, lista_peliculas) -> list:
 
@@ -153,64 +306,14 @@ def printSentimentAnalysis(api, lista_peliculas) -> list:
         resumen_analisis_sentimientos.append(lista_peliculas[i]+"\n"+str(positivo)+"\n"+str(neutral)+"\n"+str(negativo))
 
         print("-------")
-
-        # IMPORTANTE
-
-        # printing first 5 positive tweets
-        #print("\n\nPositive tweets:")
-        #for tweet in ptweets[:10]:
-        #    print(tweet['text'])
-    
-        # printing first 5 negative tweets
-        #print("\n\nNegative tweets:")
-        #for tweet in ntweets[:10]:
-        #    print(tweet['text'])
     
     return resumen_analisis_sentimientos
 
-def establishmentOfRange(min_range: int, max_range: int) -> int:
+def menu_opcion_tres(lista_peliculas_cines, lista_peliculas_exitosas, lista_peliculas_top, lista_peliculas_proximas):
 
-    while True:
+    exit_sub_menu = False
 
-        option_choice = input()
-
-        if not option_choice.isnumeric() or int(option_choice) < min_range or int(option_choice) > max_range:
-            print('The choice must be a number between ' +
-                  str(min_range)+' and ' + str(max_range))
-            continue
-        else:
-            break
-
-    return option_choice
-
-
-def  printCSV(name, resumen_peliculas):
-
-    fieldnames = ['category', 'movie_title', 'positive', 'neutral', 'negative']
-
-    lista_pelicula_individual = []
-    cadena_pelicula = ""
-
-    with open(name, 'w', newline='') as csvfile:
-        
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-
-        for i in range(len(resumen_peliculas)):
-
-            cadena_pelicula = resumen_peliculas[i]
-            lista_pelicula_individual = cadena_pelicula.split('\n')
-
-            writer.writerow({'category': 'movies_theaters', 'movie_title': lista_pelicula_individual[0], 
-            'positive': lista_pelicula_individual[1], 'neutral': lista_pelicula_individual[2], 'negative': lista_pelicula_individual[3]})
-
-def opcion_tres():
-      # Lista de peliculas
-
-    lista_peliculas_cines = []
-    lista_peliculas_exitosas = []
-    lista_peliculas_top = []
-    lista_peliculas_proximas = []
+    api = TwitterClient()
 
     # Lista con los datos que tendran los datos del analisis de sentimientos
 
@@ -219,27 +322,9 @@ def opcion_tres():
     resumen_peliculas_top = []
     resumen_peliculas_proximas = []
 
-    exit_sub_menu = False
-
-    # URL
-
-    URL_MOVIES_THEATERS = "https://imdb-api.com/en/API/InTheaters/k_57tfjuqc"
-    URL_SUCCESS_MOVIES_ALL_TIME = "https://imdb-api.com/en/API/BoxOfficeAllTime/k_57tfjuqc"
-    URL_TOP_MOVIES = "https://imdb-api.com/en/API/Top250Movies/k_57tfjuqc"
-    URL_COMING_SOON_MOVIES = "https://imdb-api.com/en/API/ComingSoon/k_57tfjuqc"
-
-    # creating object of TwitterClient Class
-    api = TwitterClient()
-    # calling function to get tweets
-   
-    lista_peliculas_cines = obtenerListaPeliculas(URL_MOVIES_THEATERS)
-    lista_peliculas_exitosas = obtenerListaPeliculas(URL_SUCCESS_MOVIES_ALL_TIME)
-    lista_peliculas_top = obtenerListaPeliculas(URL_TOP_MOVIES)
-    lista_peliculas_proximas = obtenerListaPeliculas(URL_COMING_SOON_MOVIES)
-
     while not exit_sub_menu:
 
-        showMainOptions()
+        showOptionThree()
         choice = establishmentOfRange(1, 5)
         menuChoice = int(choice)
 
@@ -266,42 +351,53 @@ def opcion_tres():
         elif menuChoice == 5:
             exit_sub_menu = True
 
-def main():
-    while True:
-        auth = tweepy.AppAuthHandler("HBE7m9FTfdR7oC5awdcuDTS66","hHDJBblupuLHephjNzxi9CKVwCGHqAAVec8sgsl4zX4BbtV85H")
-        api = tweepy.API(auth)
-        url = "https://imdb-api.com/en/API/InTheaters/k_57tfjuqc"
-        response = requests.get(url)
-        python_dictionary_values = json.loads(response.text)
-        estrenos = python_dictionary_values.get('items')
-        print("-----------------------------------------------------------------------------------------------")
-        print("\n Welcome to the Premier Tweet aplication!\n\n1.See new films:\n2.See a list of Tweets\n3.Sentiment analysis (SOON)\n4.Exit\n\n")
-        print("-----------------------------------------------------------------------------------------------")
-        try:
-            option = int(input(" Your option : "))
-            if option == 1:
-                i=0
-                while i < len(estrenos):
-                    print("\n "+estrenos[i].get("title")+"\n")
-                    i=i+1
-            elif option == 2:
-                i=0
-                while i <= len(estrenos):
-                    print("\n NEXT FILM:"+estrenos[i].get("title")+"\n")
-                    for tweet in tweepy.Cursor(api.search, q=estrenos[i].get("title")).items(20):
-                        print(tweet.text)
-                        i=i+1
-            elif option == 3:
+def main(): 
+
+    exit_sub_menu = False
+
+    # Lista de peliculas
+
+    lista_peliculas_cines = []
+    lista_peliculas_exitosas = []
+    lista_peliculas_top = []
+    lista_peliculas_proximas = []
+
+    # URL
+
+    URL_MOVIES_THEATERS = "https://imdb-api.com/en/API/InTheaters/k_57tfjuqc"
+    URL_SUCCESS_MOVIES_ALL_TIME = "https://imdb-api.com/en/API/BoxOfficeAllTime/k_57tfjuqc"
+    URL_TOP_MOVIES = "https://imdb-api.com/en/API/Top250Movies/k_57tfjuqc"
+    URL_COMING_SOON_MOVIES = "https://imdb-api.com/en/API/ComingSoon/k_57tfjuqc"
+
+    lista_peliculas_cines = obtenerListaPeliculas(URL_MOVIES_THEATERS)
+    lista_peliculas_exitosas = obtenerListaPeliculas(URL_SUCCESS_MOVIES_ALL_TIME)
+    lista_peliculas_top = obtenerListaPeliculas(URL_TOP_MOVIES)
+    lista_peliculas_proximas = obtenerListaPeliculas(URL_COMING_SOON_MOVIES)
+
+    while not exit_sub_menu:
+
+        showMainOptions()
+
+        choice = establishmentOfRange(1, 4)
+        menuChoice = int(choice)
+
+        if menuChoice == 1:
+          
+            menu_opcion_uno(lista_peliculas_cines, lista_peliculas_exitosas, lista_peliculas_top, lista_peliculas_proximas)
+            
+        elif menuChoice == 2:
+
+            menu_opcion_dos(lista_peliculas_cines, lista_peliculas_exitosas, lista_peliculas_top, lista_peliculas_proximas)
+
+        elif menuChoice == 3:
+
+           menu_opcion_tres(lista_peliculas_cines, lista_peliculas_exitosas, lista_peliculas_top, lista_peliculas_proximas)
+
+        elif menuChoice == 4:
+
+            exit_sub_menu = True
                 
-                opcion_tres()
 
-            elif option == 4:
-                print()
-                break
-            else:
-                print("Incorrect option, try again.")
-        except:
-            print("YOU HAVE TO PRINT A NUMBER!")
-
-main()
-
+if __name__ == "__main__":
+    
+    main()
