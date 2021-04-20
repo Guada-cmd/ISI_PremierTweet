@@ -6,21 +6,14 @@ from tweepy import OAuthHandler
 from textblob import TextBlob
 
 class TwitterClient(object):
-    '''
-    Twitter Class for sentiment analysis.
-    '''
-    def __init__(self):
-        '''
-        Class constructor or initialization method.
-        '''
-        # keys and tokens from the Twitter Dev Console
 
+    def __init__(self):
+        
         CONSUMER_KEY = "HBE7m9FTfdR7oC5awdcuDTS66"
         CONSUMER_SECRET = "hHDJBblupuLHephjNzxi9CKVwCGHqAAVec8sgsl4zX4BbtV85H"
         ACCESS_TOKEN = "1369335372094840838-Kur6OjM5AIqBj9xniAnz4B98sEOgB7"
         ACCESS_TOKEN_SECRET = "8SAyCy20rThI0ZBtQDNgoB4Wvp8nkSD9svIYBPFWVBMj8"
 
-        # attempt authentication
         try:
             # create OAuthHandler object
             self.auth = OAuthHandler(CONSUMER_KEY , CONSUMER_SECRET)
@@ -32,20 +25,13 @@ class TwitterClient(object):
             print("Error: Authentication Failed")
         
     def clean_tweet(self, tweet):
-        '''
-        Utility function to clean tweet text by removing links, special characters
-        using simple regex statements.
-        '''
+        
         return ' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t]) |(\w+:\/\/\S+)", " ", tweet).split())
   
     def get_tweet_sentiment(self, tweet):
-        '''
-        Utility function to classify sentiment of passed tweet
-        using textblob's sentiment method
-        '''
-        # create TextBlob object of passed tweet text
+      
         analysis = TextBlob(self.clean_tweet(tweet))
-        # set sentiment
+    
         if analysis.sentiment.polarity > 0:
             return 'positive'
         elif analysis.sentiment.polarity == 0:
@@ -54,10 +40,7 @@ class TwitterClient(object):
             return 'negative'
   
     def get_tweets(self, query, count = 10):
-        '''
-        Main function to fetch tweets and parse them.
-        '''
-        # empty list to store parsed tweets
+       
         tweets = []
   
         try:
@@ -179,7 +162,6 @@ def menu_opcion_uno(lista_peliculas_cines, lista_peliculas_exitosas, lista_pelic
             for i in range(len(lista_peliculas_exitosas)):
                 print(str(i+1)+" Movie Title ---- "+lista_peliculas_exitosas[i]+"\n")
             
-
         elif menuChoice == 3:
 
             for i in range(len(lista_peliculas_top)):
