@@ -192,40 +192,61 @@ def menu_opcion_dos(lista_peliculas_cines, lista_peliculas_exitosas, lista_pelic
             for i in range(len(lista_peliculas_cines)):
 
                 tweets = api.get_tweets(query = lista_peliculas_cines[i], count = 200)
-                print("Teewst "+lista_peliculas_cines[i])
+            
+                print("----------------------------------")
+                print("Teewts "+lista_peliculas_cines[i])
+                print("----------------------------------")
                 
                 for i in tweets[:10]:
-                    print(i['text'])
+                    print(api.clean_tweet(i['text']))
+
+                print("\n")
+
 
         elif menuChoice == 2:
             
             for i in range(len(lista_peliculas_exitosas)):
 
                 tweets = api.get_tweets(query = lista_peliculas_exitosas[i], count = 200)
-                print("Teewst "+lista_peliculas_exitosas[i])
+                
+                print("----------------------------------")
+                print("Teewts "+lista_peliculas_exitosas[i])
+                print("----------------------------------")
                 
                 for i in tweets[:10]:
-                    print(i['text'])
+                    print(api.clean_tweet(i['text']))
+
+                print("\n")
            
         elif menuChoice == 3:
 
             for i in range(len(lista_peliculas_top)):
 
                 tweets = api.get_tweets(query = lista_peliculas_top[i], count = 200)
-                print("Teewst "+lista_peliculas_top[i])
-                
+
+                print("----------------------------------")
+                print("Teewts "+lista_peliculas_top[i])
+                print("----------------------------------")
+
                 for i in tweets[:10]:
-                    print(i['text'])
+                    print(api.clean_tweet(i['text']))
+
+                print("\n")
 
         elif menuChoice == 4:
 
             for i in range(len(lista_peliculas_proximas)):
 
                 tweets = api.get_tweets(query = lista_peliculas_proximas[i], count = 200)
-                print("Teewst "+lista_peliculas_proximas[i])
+
+                print("----------------------------------")
+                print("Teewts "+lista_peliculas_proximas[i])
+                print("----------------------------------")
                 
                 for i in tweets[:10]:
-                    print(i['text'])
+                    print(api.clean_tweet(i['text']))
+
+                print("\n")
 
 
         elif menuChoice == 5:
@@ -346,10 +367,10 @@ def main():
 
     # URL
 
-    URL_MOVIES_THEATERS = "https://imdb-api.com/en/API/InTheaters/k_57tfjuqc"
-    URL_SUCCESS_MOVIES_ALL_TIME = "https://imdb-api.com/en/API/BoxOfficeAllTime/k_57tfjuqc"
-    URL_TOP_MOVIES = "https://imdb-api.com/en/API/Top250Movies/k_57tfjuqc"
-    URL_COMING_SOON_MOVIES = "https://imdb-api.com/en/API/ComingSoon/k_57tfjuqc"
+    URL_MOVIES_THEATERS = "https://imdb-api.com/en/API/InTheaters/k_6kaf1msr"
+    URL_SUCCESS_MOVIES_ALL_TIME = "https://imdb-api.com/en/API/BoxOfficeAllTime/k_6kaf1msr"
+    URL_TOP_MOVIES = "https://imdb-api.com/en/API/Top250Movies/k_6kaf1msr"
+    URL_COMING_SOON_MOVIES = "https://imdb-api.com/en/API/ComingSoon/k_6kaf1msr"
 
     lista_peliculas_cines = obtenerListaPeliculas(URL_MOVIES_THEATERS)
     lista_peliculas_exitosas = obtenerListaPeliculas(URL_SUCCESS_MOVIES_ALL_TIME)
